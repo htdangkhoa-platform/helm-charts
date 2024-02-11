@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-deployment-{{ .Chart.Version }}"
+  labels:
+    app: "{{ .Release.Name }}"
+    version: "{{ .Chart.Version }}"
+  annotations:
+    configmap.reloader.stakater.com/reload: "{{ .Release.Name }}-configmap"
+    secret.reloader.stakater.com/reload: "{{ .Release.Name }}-secret"
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount | default 1 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: "{{ .Release.Name }}"
+      version: "{{ .Chart.Version }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Release.Name }}"
+        version: "{{ .Chart.Version }}"
+    spec:
+      imagePullSecrets:
+        - name: "{{ .Values.image.pullSecrets }}"
+      {{- if .Values.imagePullSecrets }}
+      {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: "{{ .Release.Name }}"
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          envFrom:
+            - configMapRef:
+                name: "{{ .Release.Name }}-configmap"
+            - secretRef:
+                name: "{{ .Release.Name }}-secret"
+
+          {{- if .Values.service.livenessProbe }}
+          {{- if .Values.service.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: "{{ .Values.service.livenessProbe.path }}"
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.service.livenessProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ .Values.service.livenessProbe.periodSeconds | default 10 }}
+          {{- end }}
+          {{- end }}
+
+          {{- if .Values.service.readinessProbe }}
+          {{- if .Values.service.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: "{{ .Values.service.readinessProbe.path }}"
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.service.readinessProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ .Values.service.readinessProbe.periodSeconds | default 10 }}
+          {{- end }}
+          {{- end }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+        {{- if .Values.extraContainers }}
+        {{ toYaml .Values.extraContainers | nindent 8 }}
+        {{- end }}
+
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
