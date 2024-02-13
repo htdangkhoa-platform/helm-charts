@@ -24,4 +24,4 @@ git add index.yaml
 git commit -m "$commit_message"
 git tag -a $version -m "$commit_message"
 git push origin $ref
-git push origin $version
+git push --tags origin $ref
