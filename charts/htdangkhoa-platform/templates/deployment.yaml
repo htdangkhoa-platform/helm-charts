@@ -1,42 +1,57 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Release.Name }}-deployment-{{ .Chart.Version }}"
+  name: {{ include "htdangkhoa-platform.fullname" . }}
   labels:
-    app: "{{ .Release.Name }}"
-    version: "{{ .Chart.Version }}"
+    {{- include "htdangkhoa-platform.labels" . | nindent 4 }}
   annotations:
-    configmap.reloader.stakater.com/reload: "{{ .Release.Name }}-configmap"
-    secret.reloader.stakater.com/reload: "{{ .Release.Name }}-secret"
+    reloader.stakater.com/auto: "true"
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      app: "{{ .Release.Name }}"
-      version: "{{ .Chart.Version }}"
+      {{- include "htdangkhoa-platform.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      labels:
-        app: "{{ .Release.Name }}"
-        version: "{{ .Chart.Version }}"
-    spec:
-      imagePullSecrets:
-        - name: "{{ .Values.image.pullSecrets }}"
-      {{- if .Values.imagePullSecrets }}
-      {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
+      labels:
+        {{- include "htdangkhoa-platform.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: "{{ .Release.Name }}"
+        - name: {{ include "htdangkhoa-platform.fullname" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+
+          {{- if .Values.service.extraPorts }}
+          {{- range .Values.service.extraPorts }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+          {{- end }}
+          {{- end }}
           envFrom:
             - configMapRef:
-                name: "{{ .Release.Name }}-configmap"
+                name: {{ .Values.configMapRef }}
             - secretRef:
-                name: "{{ .Release.Name }}-secret"
+                name: {{ .Values.secretRef }}
 
           {{- if .Values.service.livenessProbe }}
           {{- if .Values.service.livenessProbe.enabled }}

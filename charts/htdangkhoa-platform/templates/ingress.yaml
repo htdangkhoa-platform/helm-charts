@@ -1,6 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $releaseName := .Release.Name }}
-{{- $svcName := printf "%s-service" $releaseName }}
+{{- $fullName := include "htdangkhoa-platform.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if .Values.ingress.className }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
@@ -10,9 +9,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "{{ .Release.Name }}-ingress"
+  name: {{ $fullName }}
   labels:
-    app: "{{ .Release.Name }}"
+    {{- include "htdangkhoa-platform.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -41,9 +40,9 @@ spec:
             {{- end }}
             backend:
               service: 
-                name: {{ $svcName }}
+                name: {{ $fullName }}
                 port: 
-                  number: {{ $svcPort }}
+                  number: {{ .backendPort | default $svcPort }}
           {{- end }}
     {{- end }}
 {{- end }}

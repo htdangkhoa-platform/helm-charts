@@ -1,16 +1,29 @@
+configMapRef: configmap
+secretRef: secret
+
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
 
+imagePullSecrets:
+  - name: docker-registry
+
+podSecurityContext: {}
+
 image:
   repository: <your-repository>
   tag: <your-tag>
-  pullSecrets: docker-registry
+  pullPolicy: null
 
 service:
   port: 80
+  extraPorts: []
+    # - name: http
+    #   containerPort: 8080
+    #   protocol: TCP
+    #   targetPort: http
 
   livenessProbe:
     enabled: true
@@ -24,7 +37,13 @@ service:
     initialDelaySeconds: 30
     periodSeconds: 10
 
-imagePullSecrets: []
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 extraContainers: []
   # - name: <container-name>
@@ -37,11 +56,6 @@ extraContainers: []
   #     - secretRef:
   #         name: <secret-name>
 
-extraPorts:
-  - protocol: TCP
-    port: 8080
-    targetPort: http
-
 ingress:
   enabled: true
   className: nginx
@@ -52,7 +66,13 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+    # - host: <your-second-host>
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
+    #       backendPort: 8080
   tls:
     - secretName: <your-tls-secret>
       hosts:
         - <your-host>
+        # - <your-second-host>
