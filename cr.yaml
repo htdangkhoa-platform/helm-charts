@@ -1,5 +1,5 @@
-owner: htdangkhoa
-git-repo: helm-charts
-package-path: .deploy
-git-base-url: https://api.github.com/
-git-upload-url: https://uploads.github.com/
+sign: false
+
+# Enable automatic generation of release notes using GitHubs release notes generator.
+# see: https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+generate-release-notes: true
