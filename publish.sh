@@ -17,7 +17,7 @@ commit_message="Release $version"
 # Package all charts
 helm package charts/* --destination .cr-release
 helm repo index --url https://github.com/htdangkhoa-platform/helm-charts/releases/download/$version/ --merge index.yaml ./.cr-release
-mv .cr-release/index.yaml index.yaml
+mv .cr-release/index.yaml charts/index.yaml
 
 # Commit and push
 git add index.yaml
