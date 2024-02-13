@@ -1,13 +1,17 @@
 #!/bin/bash
 
-# check current branch is main
-if [ "$(git branch --show-current)" != "main" ]; then
-  echo "You must be on the main branch to publish a release"
+# Get the version from the command line
+version=$1
+if [ -z "$version" ]; then
+  echo "No version provided"
   exit 1
 fi
 
-# Get the version from the command line
-version=$1
+ref=$2
+if [ -z "$ref" ]; then
+  ref="main"
+fi
+
 commit_message="Release $version"
 
 # Package all charts
@@ -19,5 +23,5 @@ mv .cr-release/index.yaml index.yaml
 git add index.yaml
 git commit -m "$commit_message"
 git tag -a $version -m "$commit_message"
-git push origin master
+git push origin $ref
 git push origin $version
