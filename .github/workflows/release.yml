@@ -42,7 +42,7 @@ jobs:
           git add index.yaml
           git commit -m "Release ${{ github.ref }}"
           git tag -a ${{ github.ref }} -m "Release ${{ github.ref }}"
-          git push origin ${{ github.ref }} 
+          git push origin ${{ github.ref }}:${{ github.ref }}
           git push origin --tags
 
       - name: Push Release
