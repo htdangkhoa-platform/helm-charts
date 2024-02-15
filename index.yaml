@@ -13,6 +13,16 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2024-02-15T04:49:42.939739829Z"
+    description: A Helm chart for Kubernetes
+    digest: dd0b4576a4c0b34fe0ea016b0e7810f72ee0507d5e38270032bb75b5e7a89a37
+    name: htdangkhoa-platform
+    type: application
+    urls:
+    - https://github.com/htdangkhoa-platform/helm-charts/releases/download/htdangkhoa-platform-0.0.3/htdangkhoa-platform-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-02-13T18:58:02.981539619Z"
     description: A Helm chart for Kubernetes
     digest: 5f3d5a07957c59b6f6f2b776106db8f62fd59a852a48b87a6e853c3b7aaddd76
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://github.com/htdangkhoa-platform/helm-charts/releases/download/htdangkhoa-platform-0.0.1/htdangkhoa-platform-0.0.1.tgz
     version: 0.0.1
-generated: "2024-02-13T18:58:02.981557552Z"
+generated: "2024-02-15T04:49:42.939796444Z"
