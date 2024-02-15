@@ -1,3 +1,10 @@
+nameOverride: ""
+fullnameOverride: ""
+
+annotations: {}
+  # secrets.infisical.com/auto-reload: "true" # Enable auto redeploy when the Infisical secrets change
+  # reloader.stakater.com/auto: "true" # Enable auto redeploy when the secrets change
+
 configMapRef: configmap
 secretRef: secret
 
