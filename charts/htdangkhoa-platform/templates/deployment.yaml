@@ -58,7 +58,7 @@ spec:
           livenessProbe:
             httpGet:
               path: "{{ .Values.service.livenessProbe.path }}"
-              port: {{ .Values.service.port }}
+              port: {{ .Values.service.containerPort }}
             initialDelaySeconds: {{ .Values.service.livenessProbe.initialDelaySeconds | default 30 }}
             periodSeconds: {{ .Values.service.livenessProbe.periodSeconds | default 10 }}
           {{- end }}
@@ -69,7 +69,7 @@ spec:
           readinessProbe:
             httpGet:
               path: "{{ .Values.service.readinessProbe.path }}"
-              port: {{ .Values.service.port }}
+              port: {{ .Values.service.containerPort }}
             initialDelaySeconds: {{ .Values.service.readinessProbe.initialDelaySeconds | default 30 }}
             periodSeconds: {{ .Values.service.readinessProbe.periodSeconds | default 10 }}
           {{- end }}
