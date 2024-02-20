@@ -20,8 +20,8 @@ imagePullSecrets:
 podSecurityContext: {}
 
 image:
-  repository: <your-repository>
-  tag: <your-tag>
+  repository: ""
+  tag: ""
   pullPolicy: null
 
 service:
@@ -68,18 +68,10 @@ ingress:
   className: nginx
   annotations: 
     cert-manager.io/cluster-issuer: letsencrypt
-  hosts:
-    - host: <your-host>
-      paths:
-        - path: /
-          pathType: Prefix
+  hosts: []
     # - host: <your-second-host>
     #   paths:
     #     - path: /
     #       pathType: Prefix
     #       backendPort: 8080
-  tls:
-    - secretName: <your-tls-secret>
-      hosts:
-        - <your-host>
-        # - <your-second-host>
+  tls: []
