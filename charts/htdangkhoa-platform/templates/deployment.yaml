@@ -53,6 +53,17 @@ spec:
             - secretRef:
                 name: {{ .Values.secretRef }}
 
+          {{- if .Values.service.startupProbe }}
+          {{- if .Values.service.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: "{{ .Values.service.startupProbe.path }}"
+              port: {{ .Values.service.containerPort }}
+            initialDelaySeconds: {{ .Values.service.startupProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ .Values.service.startupProbe.periodSeconds | default 10 }}
+          {{- end }}
+          {{- end }}
+
           {{- if .Values.service.livenessProbe }}
           {{- if .Values.service.livenessProbe.enabled }}
           livenessProbe:
