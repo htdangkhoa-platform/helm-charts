@@ -48,10 +48,14 @@ spec:
           {{- end }}
           {{- end }}
           envFrom:
+            {{- if .Values.configMapRef }}
             - configMapRef:
                 name: {{ .Values.configMapRef }}
+            {{- end }}
+            {{- if .Values.secretRef }}
             - secretRef:
                 name: {{ .Values.secretRef }}
+            {{- end }}
 
           {{- if .Values.service.startupProbe }}
           {{- if .Values.service.startupProbe.enabled }}
