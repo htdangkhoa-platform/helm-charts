@@ -23,8 +23,12 @@ spec:
 
     {{- if .Values.extraContainers }}
     {{- range .Values.extraContainers }}
-    - protocol: TCP
+    {{- if .ports }}
+    {{- range .ports }}
+    - protocol: {{ .protocol | default "TCP" }}
       port: {{ .containerPort }}
       targetPort: {{ .targetPort | default "http" }}
+    {{- end }}
+    {{- end }}
     {{- end }}
     {{- end }}
